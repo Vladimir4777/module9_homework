@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        input {
+            margin: 10px;
+        }
+        button {
+            margin: 10px;
+        }
+    </style>
+    <input type="text" placeholder="Введите число" id="inp1">
+    <input type="text" placeholder="Введите число" id="inp2">
+    <br><button>Submit</button>
+    <br><p></p>
+
+    <script>
+
+const inp1 = document.querySelector('#inp1');
+const inp2 = document.querySelector('#inp2');
+const btn = document.querySelector('button');
+const text = document.querySelector('p');
+
+
+function submitBtn(){
+    const width = inp1.value;
+    const height = inp2.value;
+
+    if(width === '' || isNaN(+width) || height === '' || isNaN(+height)){
+        text.textContent = 'Введено не число, введите число.';
+        return;
+    }else if(width < 100 || width > 300 || height < 100 || height > 300){
+        text.textContent = 'Одно из чисел вне диапазона от 100 до 300.';
+        return;
+    }else {
+        text.textContent = 'Загрузка фото...';
+        fetch(`https://picsum.photos/${width}/${height}`)
+        .then((response) => {
+            let image = document.createElement('img');
+            image.setAttribute('src', response.url)
+            text.insertAdjacentElement('beforebegin', image)
+            text.textContent = 'Фото загружено';
+        })
+        .catch((err) => {
+            text.textContent = 'Ошибка ' + err;
+        })
+    }
+}
+
+btn.addEventListener('click', submitBtn) 
+
+    </script>
+</body>
+</html>

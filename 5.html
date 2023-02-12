@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        input {
+            margin: 10px;
+        }
+        .card_img {
+            width: 300px;
+            height: auto;
+            margin: 10px;
+        }
+    </style>
+   
+    <label for="inp1">Номер страницы<input type="text" placeholder="Введите номер страницы" id="inp1"></label>
+    
+    <label for="inp2">Лимит<input type="text" placeholder="Введите лимит" id="inp2"></label>
+    <br><button>Запрос</button>
+    <br><p id="text"></p>
+
+    <script>
+const inp1 = document.querySelector('#inp1');
+const inp2 = document.querySelector('#inp2');
+const btn = document.querySelector('button');
+const text = document.querySelector('#text');
+
+
+btn.addEventListener('click', submitBtn)
+
+const data = localStorage.getItem('localData');
+getPhoto(JSON.parse(data));
+
+function submitBtn () {
+    const page = inp1.value;
+    const limit = inp2.value;
+    if(page === "" || page < 1 || page > 10 || isNaN(+page)){
+        text.textContent = 'Номер страницы вне диапозона от 1 до 10.'
+        return;
+    }else if(limit === "" || limit < 1 || limit > 10 || isNaN(+limit)){
+        text.textContent = 'Лимит вне диапазона от 1 до 10.'
+        return
+    }else if((page === "" || page < 1 || page > 10 || isNaN(+page)) && (limit === "" || limit < 1 || limit > 10 || isNaN(+limit))){
+        text.textContent = 'Номер страницы и лимит вне диапазона от 1 до 10.'
+        return
+    }else{
+        text.textContent = 'Загрузка фото...';
+        fetch(`https://picsum.photos/v2/list?page=${page}&limit=${limit}`)
+        .then((response) => response.json())
+        .then((data) => {
+            getPhoto(data)
+            localStorage.setItem('localData', JSON.stringify(data))
+            text.textContent = 'Фото загружено';
+    })
+        .catch((err) => text.textContent = 'Ошибка ' + err) 
+    }
+
+}
+
+function getPhoto (data) {
+    data.forEach(photo => {
+        const card = document.createElement('div');
+	    const img = document.createElement('img');
+        img.classList.add('card_img');
+		img.src = `${photo.download_url}`;
+        
+        btn.insertAdjacentElement('afterend', card)
+		card.appendChild(img);
+    })
+
+}
+
+    </script>
+</body>
+</html>

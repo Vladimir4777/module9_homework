@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Slider</title>
+</head>
+<body>
+    <style>
+        .card_img {
+            width: 300px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+       
+    </style>
+    <input type="text" placeholder="Введите число от 1 до 10"><br>
+    <br><button>Click</button>
+    <script>
+    const btn = document.querySelector('button');	
+    const input = document.querySelector('input');
+
+
+    function getPhotos (value, showResult) {
+    const xhr = new XMLHttpRequest();
+    xhr.open ('GET', `https://picsum.photos/v2/list?limit=${value}`);
+
+
+    xhr.onload = () => {
+        if(xhr.status != 200){
+            console.log('Статус ответа', xhr.status)
+        }else {
+            let response = JSON.parse(xhr.response)
+            showResult(response)
+            
+        }
+    }
+    xhr.send()
+    }
+
+    function showResult (response) {
+        response.forEach (photo => {
+            const card = document.createElement('div');
+            const img = document.createElement('img');
+            img.classList.add('card_img');
+            img.src = `${photo.download_url}`;
+
+            btn.insertAdjacentElement('afterend', card)
+            card.appendChild(img);
+        })
+    }
+
+    btn.addEventListener('click', function(){
+        let value = input.value
+        if(value == '' || isNaN(value)){
+            let text = document.createElement('p');
+            text.textContent = 'Введите число от 1 до 10'
+            btn.insertAdjacentElement('afterend', text)
+        }else if (value < 1 || value > 10){
+            let text = document.createElement('p');
+            text.textContent = 'Число вне диапозона от 1 до 10'
+            btn.insertAdjacentElement('afterend', text)
+        } else{
+            getPhotos(value, showResult)
+        }
+        
+    })
+
+    </script>
+</body>
+</html>
